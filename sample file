@@ -1,0 +1,44 @@
+public class FeedItemHandler {
+    public void ApplyShareInCIGroupAndThirdPartyProduct(List<FeedItem> newList){
+        String sharingid = String.format( '(\'\'{0}\'\')',new List<String> { String.join( new List<FeedItem>(newList) , '\',\'') });
+        system.debug('Aparna  Test'+sharingid);
+        try{
+            String strObjPrefix;
+            Map<id,id> tpAccountIdsmap = new Map<id,id>();
+            Map<id,id> tpProductIdsmap = new Map<id,id>();
+            Map<id,id> tpProductVariantIdsmap = new Map<id,id>();
+            Set<Id> cvIdSet = new Set<Id>();
+            Set<Id> groupidlst = new Set<Id>();
+            List<Id> LinkedEntityList = new List<Id>();
+            Map<Id,Set<Id>> contentDocLinkIdMap = new Map<Id,Set<Id>> ();
+            Set<ID> Oppid = new Set<ID>();
+            Set<Id> allidset=new Set<Id>();
+            Set<Id> contentDocumentIdSet = new Set<Id>();
+            Set<String> contentVersionNumbers = new Set<String>();
+            Map<Id,Set<String>> contentVersionMap = new Map<Id,Set<String>>();
+            Boolean groupinLinkedEntity = false;
+            Boolean Chatterlinkentity = false;
+            String communityId = null;
+            List<List<ConnectApi.MessageSegment>> messageSegmentsList = new List<List<ConnectApi.MessageSegment>>();
+            
+            for(FeedItem fi:newList)
+            {
+                if(fi.Type == 'ContentPost' && fi.RelatedRecordId != null)
+                {
+                    ConnectApi.FeedElement feedItem = ConnectApi.ChatterFeeds.getFeedElement(communityId, fi.Id);  
+                    List<ConnectApi.MessageSegment> messageSegments = feedItem.body.messageSegments;
+                    messageSegmentsList.add(messageSegments);
+                    cvIdSet.add(fi.RelatedRecordId);
+                }
+            }
+            for(List<ConnectApi.MessageSegment> messageSegmentlst : messageSegmentsList){
+                
+                for (ConnectApi.MessageSegment messageSegment : messageSegmentlst) {
+                    if (messageSegment instanceof ConnectApi.MentionSegment) {
+                        ConnectApi.MentionSegment mentionSegment = (ConnectApi.MentionSegment) messageSegment;
+                        allidset.add(mentionSegment.record.id);
+                           
+                    }  
+                }
+            }  
+          
